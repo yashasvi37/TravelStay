@@ -1,0 +1,19 @@
+const pino = require("pino");
+
+const isProduction = process.env.NODE_ENV === "production";
+
+// Fix 4: Structured Logging with Pino
+const logger = pino({
+  level: process.env.LOG_LEVEL || "info",
+  transport: isProduction
+    ? undefined
+    : {
+        target: "pino-pretty",
+        options: {
+          colorize: true,
+          translateTime: "SYS:standard",
+        },
+      },
+});
+
+module.exports = logger;
