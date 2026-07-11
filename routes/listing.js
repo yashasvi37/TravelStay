@@ -46,6 +46,37 @@ router.route("/")
     wrapAsync(listingController.createListing)
   );
 
+router.get("/seed", wrapAsync(async (req, res) => {
+  const { secret } = req.query;
+  if (secret !== "seedtravelstay") {
+    return res.status(403).json({ error: "Unauthorized" });
+  }
+
+  try {
+    const initData = require("../init/data.js");
+    const User = require("../models/user.js");
+    
+    // Find the first registered user to act as the owner of the seed listings
+    let defaultOwner = await User.findOne({});
+    if (!defaultOwner) {
+      return res.status(400).json({ error: "No users found in the database. Please sign up an account first before seeding." });
+    }
+
+    await Listing.deleteMany({});
+    
+    const seededData = initData.data.map((obj) => ({
+      ...obj,
+      owner: defaultOwner._id,
+      imageStatus: "ready"
+    }));
+
+    await Listing.insertMany(seededData);
+    res.json({ message: "Database seeded successfully!", count: seededData.length });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}));
+
 router.route("/:id")
   .get(wrapAsync(listingController.showListing))
   .put(

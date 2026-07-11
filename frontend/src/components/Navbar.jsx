@@ -32,13 +32,14 @@ export default function Navbar() {
 
   const navLinks = [
     { name: 'Explore', path: '/' },
-    { name: 'Destinations', path: '/listings?category=destinations' },
+    { name: 'Destinations', path: '/listings' },
     { name: 'How it works', path: '/#how-it-works' }
   ];
 
-  if (user) {
-    navLinks.push({ name: 'My Listings', path: '/profile' });
-  }
+  // Commenting out broken /profile page route for now
+  // if (user) {
+  //   navLinks.push({ name: 'My Listings', path: '/profile' });
+  // }
 
   return (
     <>
